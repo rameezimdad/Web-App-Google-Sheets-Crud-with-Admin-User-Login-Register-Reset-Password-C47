@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <!-- Font Awesome for icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+      :root {
+        --primary: #6366f1;
+        --primary-hover: #4f46e5;
+        --secondary: #64748b;
+        --success: #22c55e;
+        --danger: #ef4444;
+        --background: #f8fafc;
+        --card-bg: #ffffff;
+        --text: #1e293b;
+        --text-light: #64748b;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, sans-serif;
+        background: var(--background);
+        color: var(--text);
+        line-height: 1.6;
+      }
+      .hidden { display: none; }
+      .login-container {
+        width: 100%;
+        max-width: 400px;
+        padding: 2.5rem;
+        background: var(--card-bg);
+        margin: 5rem auto;
+        border-radius: 1.5rem;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e2e8f0;
+      }
+      .login-container h2 {
+        font-size: 1.875rem;
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 2rem;
+        text-align: center;
+      }
+      .login-container label {
+        display: block;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--text-light);
+        margin-bottom: 0.5rem;
+      }
+      .login-container input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.75rem;
+        font-size: 1rem;
+        transition: all 0.2s ease;
+        margin-bottom: 1.25rem;
+      }
+      .login-container input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+      }
+      .login-container button {
+        width: 100%;
+        padding: 0.875rem;
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 0.75rem;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        margin-top: 0.5rem;
+      }
+      .login-container button:hover {
+        background: var(--primary-hover);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.2);
+      }
+      .links {
+        text-align: center;
+        margin-top: 1rem;
+      }
+      .links a {
+        margin: 0 10px;
+        color: var(--primary);
+        cursor: pointer;
+        text-decoration: underline;
+        font-weight: 500;
+      }
+      .links a:hover {
+        color: var(--primary-hover);
+      }
+      #appSection {
+        padding: 2rem;
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+      .top-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+      }
+      .top-row h2 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text);
+      }
+      .top-row button {
+        background: var(--primary);
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.75rem;
+        font-weight: 600;
+        transition: all 0.2s ease;
+        border: none;
+        cursor: pointer;
+      }
+      .top-row button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.2);
+      }
+      .filter-section {
+        background: var(--card-bg);
+        padding: 1.5rem;
+        border-radius: 1rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        margin-bottom: 2rem;
+        border: 1px solid #e2e8f0;
+      }
+      .filter-section h3 {
+        font-size: 1.125rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+      }
+      .filter-section select,
+      .filter-section input {
+        padding: 0.5rem 1rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.75rem;
+        margin-right: 1rem;
+        margin-bottom: 1rem;
+      }
+      .filter-section button {
+        background: var(--secondary);
+        padding: 0.5rem 1.5rem;
+        border-radius: 0.75rem;
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
+      .data-container {
+        background: var(--card-bg);
+        border-radius: 1rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+        border: 1px solid #e2e8f0;
+        padding: 1rem;
+      }
+      .table-actions {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+        align-items: center;
+      }
+      .table-actions input[type="text"] {
+        padding: 0.5rem 1rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.75rem;
+      }
+      .table-actions button {
+        border: none;
+        border-radius: 0.75rem;
+        padding: 0.5rem 1rem;
+        font-weight: 500;
+        cursor: pointer;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: var(--card-bg);
+      }
+      th, td {
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 1px solid #e2e8f0;
+      }
+      th {
+        background: #f8fafc;
+        font-weight: 600;
+        color: var(--text-light);
+      }
+      tr:hover {
+        background: #f8fafc;
+      }
+      button.edit-btn {
+        background: #3b82f6;
+        padding: 0.375rem 0.75rem;
+        border-radius: 0.5rem;
+        color: white;
+        margin-right: 0.5rem;
+      }
+      button.delete-btn {
+        background: var(--danger);
+        padding: 0.375rem 0.75rem;
+        border-radius: 0.5rem;
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(4px);
+        z-index: 1000;
+      }
+      .modal-content {
+        background: var(--card-bg);
+        width: 100%;
+        max-width: 500px;
+        margin: 2rem auto;
+        padding: 2rem;
+        border-radius: 1.5rem;
+        position: relative;
+        border: 1px solid #e2e8f0;
+      }
+      .modal-content h3 {
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+      }
+      .modal-content button {
+        background: var(--primary);
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.75rem;
+        margin-top: 1rem;
+        border: none;
+        cursor: pointer;
+        font-weight: 600;
+      }
+      .modal-content button:hover {
+        background: var(--primary-hover);
+      }
+      .modal-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+      }
+      .modal-grid label {
+        display: block;
+        font-size: 0.875rem;
+        color: var(--text-light);
+        margin-bottom: 0.5rem;
+      }
+      .modal-grid input,
+      .modal-grid select {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.75rem;
+        margin-bottom: 1rem;
+      }
+      @media (max-width: 768px) {
+        .filter-section select,
+        .filter-section input {
+          width: 100%;
+          margin-right: 0;
+        }
+        .data-container {
+          overflow-x: auto;
+        }
+        table {
+          min-width: 900px;
+        }
+        .modal-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="loginSection" class="login-container">
+      <h2>Sign In</h2>
+      <label>Username</label>
+      <input type="text" id="username" />
+      <label>Password</label>
+      <input type="password" id="password" />
+      <button onclick="handleLogin()">Login</button>
+      <p id="loginMessage" style="color:red; font-size:14px; margin-top:0.5rem;"></p>
+      <div class="links">
+        <a onclick="openForgotModal()">Forgot Password?</a> |
+        <a onclick="openRegisterModal()">Register</a>
+      </div>
+    </div>
+
+    <div id="appSection" class="hidden">
+      <div class="top-row">
+        <h2>Welcome <span id="userLabel"></span> (<span id="userTypeLabel"></span>)</h2>
+        <button onclick="openModalForCreate()">+ Add New Record</button>
+      </div>
+      <div class="filter-section">
+        <h3>Filters</h3>
+        <select id="filterClass">
+          <option value="">All Classes</option>
+        </select>
+        <select id="filterCategory">
+          <option value="">All Categories</option>
+        </select>
+        <select id="filterBranch">
+          <option value="">All Branches</option>
+        </select>
+        <select id="filterStaffBranch">
+          <option value="">All Staff Branches</option>
+        </select>
+        <input type="date" id="dateFrom" />
+        <input type="date" id="dateTo" />
+        <button onclick="loadData()">Apply Filters</button>
+      </div>
+      <div class="data-container">
+        <div class="table-actions">
+          <input type="text" id="searchInput" placeholder="Search..." oninput="searchTable()">
+          <div>
+            <button onclick="copyTable()" style="background: #22c55e; color: #fff; margin-right:0.5rem;">Copy</button>
+            <button onclick="downloadCSV()" style="background: #f59e0b; color: #fff; margin-right:0.5rem;">CSV</button>
+            <button onclick="downloadPDF()" style="background: #ef4444; color: #fff;">PDF</button>
+          </div>
+        </div>
+        <table id="dataTable">
+          <thead>
+            <tr>
+              <th>Admission No</th>
+              <th>Branch Name</th>
+              <th>Name</th>
+              <th>Father Name</th>
+              <th>Class</th>
+              <th>Category</th>
+              <th>Admission Date</th>
+              <th>Staff Name</th>
+              <th>Designation</th>
+              <th>Staff Branch</th>
+              <th>Staff Code</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- CREATE/EDIT MODAL -->
+    <div id="recordModal" class="modal">
+      <div class="modal-content">
+        <h3 id="formTitle">Create New Record</h3>
+        <input type="hidden" id="rowIndex" />
+        <div class="modal-grid">
+          <div>
+            <label>Admission No:</label>
+            <input type="text" id="admissionNo" />
+          </div>
+          <div>
+            <label>Branch Name:</label>
+            <select id="branchName"></select>
+          </div>
+          <div>
+            <label>Name:</label>
+            <input type="text" id="studentName" />
+          </div>
+          <div>
+            <label>Father Name:</label>
+            <input type="text" id="fatherName" />
+          </div>
+          <div>
+            <label>Class:</label>
+            <select id="classValue"></select>
+          </div>
+          <div>
+            <label>Category:</label>
+            <select id="categoryValue"></select>
+          </div>
+          <div>
+            <label>Admission Date:</label>
+            <input type="date" id="admissionDate" />
+          </div>
+          <div>
+            <label>Staff Name:</label>
+            <input type="text" id="staffName" />
+          </div>
+          <div>
+            <label>Designation:</label>
+            <input type="text" id="designation" />
+          </div>
+          <div>
+            <label>Staff Branch:</label>
+            <select id="staffBranch"></select>
+          </div>
+          <div>
+            <label>Staff Code:</label>
+            <input type="text" id="staffCode" />
+          </div>
+        </div>
+        <div style="text-align: right; margin-top: 1rem;">
+          <button onclick="submitForm()">Save Record</button>
+          <button style="margin-left: 1rem; background: #64748b;" onclick="closeModal()">Close Form</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- REGISTER MODAL -->
+    <div id="registerModal" class="modal">
+      <div class="modal-content">
+        <button style="position:absolute; top:1rem; right:1rem; font-size:1.25rem; background:none; border:none; cursor:pointer; color:#666;" onclick="closeRegisterModal()">&times;</button>
+        <h3>Register New User</h3>
+        <label>Username (Email)</label>
+        <input type="text" id="regUsername" />
+        <label>Password</label>
+        <input type="password" id="regPassword" />
+        <button onclick="doRegister()">Register</button>
+      </div>
+    </div>
+
+    <!-- FORGOT PASSWORD MODAL -->
+    <div id="forgotModal" class="modal">
+      <div class="modal-content">
+        <button style="position:absolute; top:1rem; right:1rem; font-size:1.25rem; background:none; border:none; cursor:pointer; color:#666;" onclick="closeForgotModal()">&times;</button>
+        <h3>Forgot Password</h3>
+        <div id="forgotStep1">
+          <label>Enter your username (email)</label>
+          <input type="text" id="forgotUsername" />
+          <button onclick="requestOTP()">Send OTP</button>
+        </div>
+        <div id="forgotStep2" style="display:none; margin-top:1rem;">
+          <label>Enter OTP</label>
+          <input type="text" id="forgotOTP" />
+          <label>New Password</label>
+          <input type="password" id="newPassword" />
+          <button onclick="verifyOTP()">Reset Password</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let currentUser = ""
+      let currentUserType = ""
+
+      // --------------------- LOGIN FUNCTION ---------------------
+      function handleLogin() {
+        const username = document.getElementById("username").value.trim()
+        const password = document.getElementById("password").value.trim()
+
+        // Show a SweetAlert2 loader while verifying
+        Swal.fire({
+          title: 'Verifying...',
+          text: 'Please wait while we verify your credentials',
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading()
+          }
+        })
+
+        google.script.run.withSuccessHandler(function(result) {
+          // Close the loader once we have a response
+          Swal.close()
+
+          if (result.success) {
+            currentUser = username
+            currentUserType = result.userType
+            document.getElementById("loginSection").classList.add("hidden")
+            document.getElementById("appSection").classList.remove("hidden")
+            document.getElementById("userLabel").textContent = currentUser
+            document.getElementById("userTypeLabel").textContent = currentUserType
+            loadDropdownOptions()
+            loadData()
+          } else {
+            Swal.fire({
+              icon: 'error',
+              title: 'Login Failed',
+              text: result.message || 'Invalid username or password.'
+            })
+          }
+        }).userLogin(username, password)
+      }
+
+      // --------------------- REGISTER MODAL ---------------------
+      function openRegisterModal() {
+        document.getElementById("regUsername").value = ""
+        document.getElementById("regPassword").value = ""
+        document.getElementById("registerModal").style.display = "block"
+      }
+      function closeRegisterModal() {
+        document.getElementById("registerModal").style.display = "none"
+      }
+      function doRegister() {
+        const newUser = document.getElementById("regUsername").value.trim()
+        const newPass = document.getElementById("regPassword").value.trim()
+        if (!newUser || !newPass) {
+          Swal.fire('Error', 'Please enter both username and password.', 'error')
+          return
+        }
+        google.script.run.withSuccessHandler(function(resp) {
+          if (resp.success) {
+            Swal.fire('Registered', resp.message, 'success')
+            closeRegisterModal()
+          } else {
+            Swal.fire('Error', resp.message, 'error')
+          }
+        }).registerUser(newUser, newPass)
+      }
+
+      // --------------------- FORGOT PASSWORD MODAL ---------------------
+      function openForgotModal() {
+        document.getElementById("forgotUsername").value = ""
+        document.getElementById("forgotOTP").value = ""
+        document.getElementById("newPassword").value = ""
+        document.getElementById("forgotStep1").style.display = "block"
+        document.getElementById("forgotStep2").style.display = "none"
+        document.getElementById("forgotModal").style.display = "block"
+      }
+      function closeForgotModal() {
+        document.getElementById("forgotModal").style.display = "none"
+      }
+      function requestOTP() {
+        const email = document.getElementById("forgotUsername").value.trim()
+        if (!email) {
+          Swal.fire('Error', 'Please enter your email.', 'error')
+          return
+        }
+        google.script.run.withSuccessHandler(function(resp) {
+          if (resp.success) {
+            Swal.fire('OTP Sent', 'Check your email for the OTP.', 'success')
+            document.getElementById("forgotStep1").style.display = "none"
+            document.getElementById("forgotStep2").style.display = "block"
+          } else {
+            Swal.fire('Error', resp.message, 'error')
+          }
+        }).forgotPasswordRequest(email)
+      }
+      function verifyOTP() {
+        const email = document.getElementById("forgotUsername").value.trim()
+        const userOTP = document.getElementById("forgotOTP").value.trim()
+        const newPass = document.getElementById("newPassword").value.trim()
+        if (!userOTP || !newPass) {
+          Swal.fire('Error', 'Please enter both OTP and new password.', 'error')
+          return
+        }
+        google.script.run.withSuccessHandler(function(resp2) {
+          if (resp2.success) {
+            Swal.fire('Success', 'Password changed successfully!', 'success')
+            closeForgotModal()
+          } else {
+            Swal.fire('Error', resp2.message, 'error')
+          }
+        }).forgotPasswordVerify(email, userOTP, newPass)
+      }
+
+      // --------------------- LOADING DROPDOWN OPTIONS ---------------------
+      function loadDropdownOptions() {
+        google.script.run.withSuccessHandler(function(options) {
+          const classSelect = document.getElementById("filterClass")
+          const categorySelect = document.getElementById("filterCategory")
+          const branchFilterSelect = document.getElementById("filterBranch")
+          const staffBranchFilterSelect = document.getElementById("filterStaffBranch")
+
+          const classFormSelect = document.getElementById("classValue")
+          const categoryFormSelect = document.getElementById("categoryValue")
+          const branchFormSelect = document.getElementById("branchName")
+          const staffBranchFormSelect = document.getElementById("staffBranch")
+
+          classSelect.innerHTML = '<option value="">All Classes</option>'
+          categorySelect.innerHTML = '<option value="">All Categories</option>'
+          branchFilterSelect.innerHTML = '<option value="">All Branches</option>'
+          staffBranchFilterSelect.innerHTML = '<option value="">All Staff Branches</option>'
+
+          classFormSelect.innerHTML = ''
+          categoryFormSelect.innerHTML = ''
+          branchFormSelect.innerHTML = ''
+          staffBranchFormSelect.innerHTML = ''
+
+          options.classList.forEach(cls => {
+            let opt1 = document.createElement("option")
+            opt1.value = cls
+            opt1.textContent = cls
+            classSelect.appendChild(opt1)
+
+            let opt2 = document.createElement("option")
+            opt2.value = cls
+            opt2.textContent = cls
+            classFormSelect.appendChild(opt2)
+          })
+          options.categoryList.forEach(cat => {
+            let opt1 = document.createElement("option")
+            opt1.value = cat
+            opt1.textContent = cat
+            categorySelect.appendChild(opt1)
+
+            let opt2 = document.createElement("option")
+            opt2.value = cat
+            opt2.textContent = cat
+            categoryFormSelect.appendChild(opt2)
+          })
+          options.branchList.forEach(branch => {
+            let opt1 = document.createElement("option")
+            opt1.value = branch
+            opt1.textContent = branch
+            branchFilterSelect.appendChild(opt1)
+
+            let opt2 = document.createElement("option")
+            opt2.value = branch
+            opt2.textContent = branch
+            branchFormSelect.appendChild(opt2)
+          })
+          options.staffBranchList.forEach(sb => {
+            let opt1 = document.createElement("option")
+            opt1.value = sb
+            opt1.textContent = sb
+            staffBranchFilterSelect.appendChild(opt1)
+
+            let opt2 = document.createElement("option")
+            opt2.value = sb
+            opt2.textContent = sb
+            staffBranchFormSelect.appendChild(opt2)
+          })
+        }).getDropdownOptions()
+      }
+
+      // --------------------- LOADING DATA ---------------------
+      function loadData() {
+        const filterClass = document.getElementById("filterClass").value
+        const filterCategory = document.getElementById("filterCategory").value
+        const filterBranch = document.getElementById("filterBranch").value
+        const filterStaffBranch = document.getElementById("filterStaffBranch").value
+        const dateFrom = document.getElementById("dateFrom").value
+        const dateTo = document.getElementById("dateTo").value
+
+        google.script.run.withSuccessHandler(function(rows) {
+          populateTable(rows)
+        }).getData(
+          currentUser,
+          currentUserType,
+          filterClass,
+          filterCategory,
+          filterBranch,
+          filterStaffBranch,
+          dateFrom,
+          dateTo
+        )
+      }
+
+      // --------------------- POPULATE TABLE ---------------------
+      function populateTable(dataArray) {
+        const tbody = document.querySelector("#dataTable tbody")
+        tbody.innerHTML = ""
+        dataArray.forEach(function(item) {
+          let tr = document.createElement("tr")
+          tr.innerHTML = `
+            <td>${item.admissionNo || ""}</td>
+            <td>${item.branchName || ""}</td>
+            <td>${item.studentName || ""}</td>
+            <td>${item.fatherName || ""}</td>
+            <td>${item.classValue || ""}</td>
+            <td>${item.categoryValue || ""}</td>
+            <td>${item.admissionDate || ""}</td>
+            <td>${item.staffName || ""}</td>
+            <td>${item.designation || ""}</td>
+            <td>${item.staffBranch || ""}</td>
+            <td>${item.staffCode || ""}</td>
+            <td>
+              <button class="edit-btn" onclick="openModalForEdit(
+                ${item.rowIndex},
+                '${item.admissionNo}',
+                '${item.branchName}',
+                '${item.studentName}',
+                '${item.fatherName}',
+                '${item.classValue}',
+                '${item.categoryValue}',
+                '${item.admissionDate}',
+                '${item.staffName}',
+                '${item.designation}',
+                '${item.staffBranch}',
+                '${item.staffCode}'
+              )">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="delete-btn" onclick="deleteRecord(${item.rowIndex})">
+                <i class="fas fa-trash-alt"></i>
+              </button>
+            </td>
+          `
+          tbody.appendChild(tr)
+        })
+      }
+
+      // --------------------- CREATE / EDIT MODAL ---------------------
+      function openModalForCreate() {
+        document.getElementById("formTitle").textContent = "Create New Record"
+        clearForm()
+        document.getElementById("recordModal").style.display = "block"
+      }
+
+      function openModalForEdit(
+        rowIndex,
+        admissionNo,
+        branchName,
+        studentName,
+        fatherName,
+        classValue,
+        categoryValue,
+        admissionDate,
+        staffName,
+        designation,
+        staffBranch,
+        staffCode
+      ) {
+        document.getElementById("formTitle").textContent = "Update Record"
+        document.getElementById("rowIndex").value = rowIndex
+        document.getElementById("admissionNo").value = admissionNo
+        document.getElementById("branchName").value = branchName
+        document.getElementById("studentName").value = studentName
+        document.getElementById("fatherName").value = fatherName
+        document.getElementById("classValue").value = classValue
+        document.getElementById("categoryValue").value = categoryValue
+        document.getElementById("admissionDate").value = admissionDate
+        document.getElementById("staffName").value = staffName
+        document.getElementById("designation").value = designation
+        document.getElementById("staffBranch").value = staffBranch
+        document.getElementById("staffCode").value = staffCode
+        document.getElementById("recordModal").style.display = "block"
+      }
+
+      function closeModal() {
+        document.getElementById("recordModal").style.display = "none"
+      }
+
+      function clearForm() {
+        document.getElementById("rowIndex").value = ""
+        document.getElementById("admissionNo").value = ""
+        document.getElementById("branchName").value = ""
+        document.getElementById("studentName").value = ""
+        document.getElementById("fatherName").value = ""
+        document.getElementById("classValue").value = ""
+        document.getElementById("categoryValue").value = ""
+        document.getElementById("admissionDate").value = ""
+        document.getElementById("staffName").value = ""
+        document.getElementById("designation").value = ""
+        document.getElementById("staffBranch").value = ""
+        document.getElementById("staffCode").value = ""
+      }
+
+      // --------------------- CREATE/UPDATE RECORD ---------------------
+      function submitForm() {
+        // Show loader while saving
+        Swal.fire({
+          title: 'Saving...',
+          text: 'Please wait while we save your record',
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading()
+          }
+        })
+
+        const rowIndex = document.getElementById("rowIndex").value
+        const recordObj = {
+          admissionNo: document.getElementById("admissionNo").value.trim(),
+          branchName: document.getElementById("branchName").value,
+          studentName: document.getElementById("studentName").value.trim(),
+          fatherName: document.getElementById("fatherName").value.trim(),
+          classValue: document.getElementById("classValue").value,
+          categoryValue: document.getElementById("categoryValue").value,
+          admissionDate: document.getElementById("admissionDate").value,
+          staffName: document.getElementById("staffName1").value.trim(),
+          designation: document.getElementById("designation1").value.trim(),
+          staffBranch: document.getElementById("staffBranch1").value,
+          staffCode: document.getElementById("staffCode1").value.trim()
+        }
+
+        if (rowIndex) {
+          recordObj.rowIndex = parseInt(rowIndex)
+          google.script.run.withSuccessHandler(function(resp) {
+            Swal.close() // close the loader
+            if (resp.success) {
+              Swal.fire('Updated', resp.message, 'success')
+              closeModal()
+              loadData()
+            } else {
+              Swal.fire('Error', resp.message, 'error')
+            }
+          }).updateRecord(recordObj, currentUser)
+        } else {
+          google.script.run.withSuccessHandler(function(resp) {
+            Swal.close() // close the loader
+            if (resp.success) {
+              Swal.fire('Created', resp.message, 'success')
+              closeModal()
+              loadData()
+            } else {
+              Swal.fire('Error', resp.message, 'error')
+            }
+          }).createRecord(recordObj, currentUser)
+        }
+      }
+
+      // --------------------- DELETE RECORD ---------------------
+      function deleteRecord(rowIndex) {
+        Swal.fire({
+          title: 'Are you sure?',
+          text: 'This record will be deleted.',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#d33',
+          confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // Show loader while deleting
+            Swal.fire({
+              title: 'Deleting...',
+              text: 'Please wait while we delete the record',
+              allowOutsideClick: false,
+              didOpen: () => {
+                Swal.showLoading()
+              }
+            })
+
+            google.script.run.withSuccessHandler(function(resp) {
+              Swal.close() // close the loader
+              if (resp.success) {
+                Swal.fire('Deleted', resp.message, 'success')
+                loadData()
+              } else {
+                Swal.fire('Error', resp.message, 'error')
+              }
+            }).deleteRecord(rowIndex)
+          }
+        })
+      }
+
+      // --------------------- SEARCH TABLE ---------------------
+      function searchTable() {
+        const searchVal = document.getElementById('searchInput').value.toLowerCase()
+        const table = document.getElementById('dataTable')
+        const rows = table.getElementsByTagName('tr')
+        for (let i = 1; i < rows.length; i++) {
+          let rowText = rows[i].innerText.toLowerCase()
+          rows[i].style.display = rowText.indexOf(searchVal) > -1 ? '' : 'none'
+        }
+      }
+
+      // --------------------- COPY TABLE ---------------------
+      function copyTable() {
+        const table = document.getElementById('dataTable')
+        let rows = table.getElementsByTagName('tr')
+        let text = ''
+        for (let i = 0; i < rows.length; i++) {
+          let rowCells = rows[i].children
+          let rowData = []
+          for (let j = 0; j < rowCells.length; j++) {
+            rowData.push(rowCells[j].innerText)
+          }
+          text += rowData.join('\t') + '\n'
+        }
+        navigator.clipboard.writeText(text).then(
+          function() {
+            Swal.fire('Copied!', 'Table copied to clipboard!', 'success')
+          },
+          function(err) {
+            Swal.fire('Error', 'Could not copy text: ' + err, 'error')
+          }
+        )
+      }
+
+      // --------------------- DOWNLOAD CSV ---------------------
+      function downloadCSV() {
+        const table = document.getElementById('dataTable')
+        let csv = []
+        let headers = table.querySelectorAll('thead tr th')
+        let headerArray = []
+        headers.forEach(th => headerArray.push(th.innerText))
+        csv.push(headerArray.join(','))
+
+        let rows = table.querySelectorAll('tbody tr')
+        rows.forEach(row => {
+          if (row.style.display !== 'none') {
+            let cells = row.querySelectorAll('td')
+            let rowData = []
+            cells.forEach(cell => {
+              let cellVal = cell.innerText.replace(/,/g, ' ')
+              rowData.push(cellVal)
+            })
+            csv.push(rowData.join(','))
+          }
+        })
+        let csvContent = "data:text/csv;charset=utf-8," + encodeURIComponent(csv.join('\n'))
+        let link = document.createElement('a')
+        link.setAttribute('href', csvContent)
+        link.setAttribute('download', 'table_data.csv')
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+      }
+
+      // --------------------- DOWNLOAD PDF ---------------------
+      function downloadPDF() {
+        // Simple "Print to PDF" approach
+        window.print()
+      }
+    </script>
+  </body>
+</html>
